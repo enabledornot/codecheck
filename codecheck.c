@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "codecheck.h"
 
 #define MAX_LINE_LENGTH 80
 #define MAX_FUNCTION_LENGTH 20
