@@ -1,21 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+
 #define MAX_LINE_LENGTH 80
+
 static int currentLineCount;
 static int currentCharCount;
 static int mistakeCount;
 static int indentSpaceCount;
+static int indentDetectedLength;
 static bool isInIndent;
-void handleChar(char currentChar) {
-    if(currentChar=='\n') {
-        if(currentCharCount>MAX_LINE_LENGTH) {
-            printf("LINE LENGTH ERROR ON LINE %d\n",currentLineCount);
+void handleNewLineChar() {
+    if(currentCharCount>MAX_LINE_LENGTH) {
+        printf("LINE LENGTH ERROR ON LINE %d\n",currentLineCount);
+        mistakeCount+=1;
+    }
+    if(indentDetectedLength==0) {
+        if(indentSpaceCount!=0) {
+            indentDetectedLength = indentSpaceCount;
+            printf("detected index length of %d\n",indentDetectedLength);
+        }
+    }
+    else {
+        if(indentSpaceCount%indentDetectedLength!=0) {
+            printf("INDENT ERROR ON LINE %d\n",currentLineCount);
             mistakeCount+=1;
         }
-        currentLineCount+=1;
-        currentCharCount = 0;
-        isInIndent = true;
+    }
+    currentLineCount+=1;
+    currentCharCount = 0;
+    isInIndent = true;
+}
+void handleChar(char currentChar) {
+    if(currentChar=='\n') {
+        handleNewLineChar();
     }
     else if(currentChar==' ') {
         if(isInIndent) {
