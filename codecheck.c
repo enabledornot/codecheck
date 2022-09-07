@@ -10,10 +10,13 @@ static int mistakeCount;
 static int indentSpaceCount;
 static int indentDetectedLength;
 static bool isInIndent;
+void codingMistake(char *formattedPrint) {
+    printf(formattedPrint,currentLineCount);
+    mistakeCount+=1;
+}
 void handleNewLineChar() {
     if(currentCharCount>MAX_LINE_LENGTH) {
-        printf("LINE LENGTH ERROR ON LINE %d\n",currentLineCount);
-        mistakeCount+=1;
+        codingMistake("LINE LENGTH ERROR ON LINE %d\n");
     }
     if(indentDetectedLength==0) {
         if(indentSpaceCount!=0) {
@@ -22,9 +25,8 @@ void handleNewLineChar() {
         }
     }
     else {
-        if(indentSpaceCount%indentDetectedLength!=0 && isInIndent) {
-            printf("INDENT ERROR ON LINE %d\n",currentLineCount);
-            mistakeCount+=1;
+        if(indentSpaceCount%indentDetectedLength!=0 && !isInIndent) {
+            codingMistake("INDENT ERROR ON LINE %d\n");
         }
     }
     currentLineCount+=1;
@@ -42,8 +44,7 @@ void handleChar(char currentChar) {
         }
     }
     else if(isInIndent && currentChar=='	') {
-        printf("TABS LOCATED ON LINE %d\n",currentLineCount);
-        mistakeCount+=1;
+        codingMistake("TABS LOCATED ON LINE %d\n");
     }
     else {
         isInIndent = false;
@@ -75,15 +76,15 @@ void checkFileRec(FILE *file, int dept) {
         }
         currentChar = fgetc(file);
     }
-    if(MAX_FUNCTION_LENGTH<recLineCount) {
-        printf("MAX FUNCTION LENGTH DETECTED ON LINE %d\n",startLine);
-        mistakeCount+=1;
+    if(dept != 0 && MAX_FUNCTION_LENGTH < recLineCount) {
+        codingMistake("MAX FUNCTION LENGTH DETECTED ON LINE %d\n");
     }
 }
 int main(int argc, char *argv[]) {
     FILE *file;
     if(argc>1 && (file = fopen(argv[1],"r"))) {
         printf("File Found\nReading File\n");
+        mistakeCount = 0;
         checkFile(file);
         rewind(file);
         currentLineCount = 1;
