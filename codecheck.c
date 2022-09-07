@@ -76,7 +76,7 @@ void checkFileRec(FILE *file, int dept) {
         currentChar = fgetc(file);
     }
     if(MAX_FUNCTION_LENGTH<recLineCount) {
-        printf("MAX FUNCTION LINK DETECTED ON LINE %d\n",startLine);
+        printf("MAX FUNCTION LENGTH DETECTED ON LINE %d\n",startLine);
         mistakeCount+=1;
     }
 }
