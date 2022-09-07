@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 void checkFile(FILE *file) {
     char currentChar = fgetc(file);
     int lineCount = 0;
