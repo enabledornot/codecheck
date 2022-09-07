@@ -14,7 +14,7 @@ void codingMistake(char *formattedPrint, int lineNumber) {
     printf(formattedPrint,lineNumber);
     mistakeCount+=1;
 }
-void handleNewLineChar() {
+void handleNewLineChar(int* recLineCount) {
     if(currentCharCount>MAX_LINE_LENGTH) {
         codingMistake("LINE LENGTH ERROR ON LINE %d\n",currentLineCount);
     }
@@ -30,13 +30,14 @@ void handleNewLineChar() {
         }
     }
     currentLineCount+=1;
+    *recLineCount+=1;
     currentCharCount = 0;
     indentSpaceCount = 0;
     isInIndent = true;
 }
-void handleChar(char currentChar) {
+void handleChar(char currentChar,int* recLineCount) {
     if(currentChar=='\n') {
-        handleNewLineChar();
+        handleNewLineChar(recLineCount);
     }
     else if(currentChar==' ') {
         if(isInIndent) {
@@ -51,17 +52,6 @@ void handleChar(char currentChar) {
         currentCharCount+=1;
     }
 }
-void checkFile(FILE *file) {
-    char currentChar = fgetc(file);
-    currentLineCount = 1;
-    currentCharCount = 0;
-    isInIndent = true;
-    while(currentChar != EOF) {
-        handleChar(currentChar);
-        currentChar = fgetc(file);
-    }
-    handleChar('\n');
-}
 int checkFileRec(FILE *file, int dept) {
     char currentChar = fgetc(file);
     int recLineCount = 0;
@@ -70,10 +60,7 @@ int checkFileRec(FILE *file, int dept) {
         if(currentChar=='{') {
             recLineCount+=checkFileRec(file,dept+1);
         }
-        else if (currentChar =='\n') {
-            currentLineCount+=1;
-            recLineCount+=1;
-        }
+        handleChar(currentChar,&recLineCount);
         currentChar = fgetc(file);
     }
     if(dept != 0 && MAX_FUNCTION_LENGTH < recLineCount) {
@@ -87,9 +74,9 @@ int main(int argc, char *argv[]) {
     if(argc>1 && (file = fopen(argv[1],"r"))) {
         printf("File Found\nReading File\n");
         mistakeCount = 0;
-        checkFile(file);
-        rewind(file);
         currentLineCount = 1;
+        currentCharCount = 0;
+        isInIndent = true;
         checkFileRec(file,0);
         if(mistakeCount==0) {
             printf("great job, no issues found\n");
