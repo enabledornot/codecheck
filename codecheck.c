@@ -21,7 +21,7 @@ void handleNewLineChar(int* recLineCount) {
     if(indentDetectedLength==0) {
         if(indentSpaceCount!=0) {
             indentDetectedLength = indentSpaceCount;
-            printf("detected index length of %d\n",indentDetectedLength);
+            printf("detected indent length of %d\n",indentDetectedLength);
         }
     }
     else {
