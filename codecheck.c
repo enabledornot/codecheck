@@ -62,13 +62,13 @@ void checkFile(FILE *file) {
     }
     handleChar('\n');
 }
-void checkFileRec(FILE *file, int dept) {
+int checkFileRec(FILE *file, int dept) {
     char currentChar = fgetc(file);
     int recLineCount = 0;
     int startLine = currentLineCount;
     while(currentChar != EOF && currentChar!='}') {
         if(currentChar=='{') {
-            checkFileRec(file,dept+1);
+            recLineCount+=checkFileRec(file,dept+1);
         }
         else if (currentChar =='\n') {
             currentLineCount+=1;
@@ -77,8 +77,9 @@ void checkFileRec(FILE *file, int dept) {
         currentChar = fgetc(file);
     }
     if(dept != 0 && MAX_FUNCTION_LENGTH < recLineCount) {
-        codingMistake("MAX FUNCTION LENGTH DETECTED ON LINE %d\n");
+        codingMistake("MAX FUNCTION LENGTH DETECTED ON FUNCTION THAT STARTS ON LINE %d\n");
     }
+    return recLineCount;
 }
 int main(int argc, char *argv[]) {
     FILE *file;
