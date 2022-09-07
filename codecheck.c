@@ -40,6 +40,10 @@ void handleChar(char currentChar) {
             indentSpaceCount+=1;
         }
     }
+    else if(isInIndent && currentChar=='	') {
+        printf("TABS LOCATED ON LINE %d\n",currentLineCount);
+        mistakeCount+=1;
+    }
     else {
         isInIndent = false;
         currentCharCount+=1;
