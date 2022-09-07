@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 #define MAX_LINE_LENGTH 80
-
+#define MAX_FUNCTION_LENGTH 20
 static int currentLineCount;
 static int currentCharCount;
 static int mistakeCount;
@@ -60,11 +60,24 @@ void checkFile(FILE *file) {
         currentChar = fgetc(file);
     }
     handleChar('\n');
-    if(mistakeCount==0) {
-        printf("great job, no issues found\n");
+}
+void checkFileRec(FILE *file, int dept) {
+    char currentChar = fgetc(file);
+    int recLineCount = 0;
+    int startLine = currentLineCount;
+    while(currentChar != EOF && currentChar!='}') {
+        if(currentChar=='{') {
+            checkFileRec(file,dept+1);
+        }
+        else if (currentChar =='\n') {
+            currentLineCount+=1;
+            recLineCount+=1;
+        }
+        currentChar = fgetc(file);
     }
-    else {
-        printf("%d problems found with your program\n",mistakeCount);
+    if(MAX_FUNCTION_LENGTH<recLineCount) {
+        printf("MAX FUNCTION LINK DETECTED ON LINE %d\n",startLine);
+        mistakeCount+=1;
     }
 }
 int main(int argc, char *argv[]) {
@@ -72,6 +85,15 @@ int main(int argc, char *argv[]) {
     if(argc>1 && (file = fopen(argv[1],"r"))) {
         printf("File Found\nReading File\n");
         checkFile(file);
+        rewind(file);
+        currentLineCount = 1;
+        checkFileRec(file,0);
+        if(mistakeCount==0) {
+            printf("great job, no issues found\n");
+        }
+        else {
+            printf("%d problems found with your program\n",mistakeCount);
+        }
     }
     else {
         printf("Argument error\nPlease provide the path to a file as an"
