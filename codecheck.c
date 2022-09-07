@@ -1,20 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define MAX_LINE_LENGTH 80
+static int currentLineCount;
+static int currentCharCount;
+void handleChar(char currentChar) {
+    if(currentChar=='\n') {
+        if(currentCharCount>MAX_LINE_LENGTH) {
+            printf("LINE LENGTH ERROR ON LINE %d\n",currentLineCount);
+        }
+        currentLineCount+=1;
+        currentCharCount = 0;
+    }
+    else {
+        currentCharCount+=1;
+    }
+}
 void checkFile(FILE *file) {
     char currentChar = fgetc(file);
-    int lineCount = 0;
-    int charCount = 0;
+    currentLineCount = 1;
+    currentCharCount = 0;
     while(currentChar != EOF) {
-        if(currentChar=='\n') {
-            printf("Line %d Count %d\n",lineCount,charCount);
-            lineCount+=1;
-            charCount = 0;
-        }
-        else {
-            charCount+=1;
-        }
+        handleChar(currentChar);
         currentChar = fgetc(file);
     }
+    handleChar('\n');
     printf("\n");
 }
 int main(int argc, char *argv[]) {
