@@ -22,13 +22,14 @@ void handleNewLineChar() {
         }
     }
     else {
-        if(indentSpaceCount%indentDetectedLength!=0) {
+        if(indentSpaceCount%indentDetectedLength!=0 && isInIndent) {
             printf("INDENT ERROR ON LINE %d\n",currentLineCount);
             mistakeCount+=1;
         }
     }
     currentLineCount+=1;
     currentCharCount = 0;
+    indentSpaceCount = 0;
     isInIndent = true;
 }
 void handleChar(char currentChar) {
