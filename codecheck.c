@@ -3,10 +3,12 @@
 #define MAX_LINE_LENGTH 80
 static int currentLineCount;
 static int currentCharCount;
+static int mistakeCount;
 void handleChar(char currentChar) {
     if(currentChar=='\n') {
         if(currentCharCount>MAX_LINE_LENGTH) {
             printf("LINE LENGTH ERROR ON LINE %d\n",currentLineCount);
+            mistakeCount+=1;
         }
         currentLineCount+=1;
         currentCharCount = 0;
@@ -24,7 +26,12 @@ void checkFile(FILE *file) {
         currentChar = fgetc(file);
     }
     handleChar('\n');
-    printf("\n");
+    if(mistakeCount==0) {
+        printf("great job, no issues found\n");
+    }
+    else {
+        printf("%d problems found with your program\n");
+    }
 }
 int main(int argc, char *argv[]) {
     FILE *file;
@@ -33,6 +40,7 @@ int main(int argc, char *argv[]) {
         checkFile(file);
     }
     else {
-        printf("Argument error\nPlease provide the path to a file as an argument\n");
+        printf("Argument error\nPlease provide the path to a file as an"
+        "argument\n");
     }
 }
