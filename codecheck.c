@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #define MAX_LINE_LENGTH 80
 static int currentLineCount;
 static int currentCharCount;
 static int mistakeCount;
+static int indentSpaceCount;
+static bool isInIndent;
 void handleChar(char currentChar) {
     if(currentChar=='\n') {
         if(currentCharCount>MAX_LINE_LENGTH) {
@@ -12,8 +15,15 @@ void handleChar(char currentChar) {
         }
         currentLineCount+=1;
         currentCharCount = 0;
+        isInIndent = true;
+    }
+    else if(currentChar==' ') {
+        if(isInIndent) {
+            indentSpaceCount+=1;
+        }
     }
     else {
+        isInIndent = false;
         currentCharCount+=1;
     }
 }
@@ -21,6 +31,7 @@ void checkFile(FILE *file) {
     char currentChar = fgetc(file);
     currentLineCount = 1;
     currentCharCount = 0;
+    isInIndent = true;
     while(currentChar != EOF) {
         handleChar(currentChar);
         currentChar = fgetc(file);
@@ -30,7 +41,7 @@ void checkFile(FILE *file) {
         printf("great job, no issues found\n");
     }
     else {
-        printf("%d problems found with your program\n");
+        printf("%d problems found with your program\n",mistakeCount);
     }
 }
 int main(int argc, char *argv[]) {
